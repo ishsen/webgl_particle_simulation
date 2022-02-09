@@ -5,8 +5,8 @@ The progression of an infectious disease modeled by a particle simulation. Two p
 ![Alt Text](simulation.gif)
 
 ### TODO
- [x] Tranferred particle movement to WebGL
- [x] Created ability to pause and play simulation
+- [x] Tranferred particle movement to WebGL
+- [x] Created ability to pause and play simulation
 - [ ] Add ability to place obstacles and quarantine zones
 - [ ] Improve logic for infection states and more informed heuristics
 
