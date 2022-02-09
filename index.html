@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <title>Document</title>
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="visuals">
+            <div id="vis">
+                
+                <button id="play-button">Run particles</button>
+            </div>
+            <div id="legend">
+                <div class="title_container">
+                    <h3 class="sub_title">
+                        Counts
+                    </h3>
+                </div>
+            </div>
+            <div class="container">
+                <div class="title_container">
+                    <h3 class="sub_title">
+                        Infection Progression Over Time
+                    </h3>
+                </div>
+                <div id="graph">
+
+                </div>
+            </div>
+
+
+        </div>
+        <div id="stats"></div>
+        <div id="simulation"></div>
+    </div>
+
+
+    <script src="https://d3js.org/d3.v4.js"></script>
+    <script src="https://d3js.org/d3-random.v1.min.js"></script>
+    <script src="https://d3js.org/d3-quadtree.v1.min.js"></script>
+    <script src="https://unpkg.com/three@0.105.2/examples/js/libs/stats.min.js"></script>
+    <script src="https://unpkg.com/geometric@2/build/geometric.min.js"></script>
+    <script src="simulation.js"></script>
+    <script src="util.js"></script>
+    <script src="visuals.js"></script>
+    <script src="graph.js"></script>
+    <script src="table.js"></script>
+    <script>
+        const numParticles = 200;
+        const numTicks = 1000;
+        const simulationOpts = { width: 1000, height: 500, timelength: numTicks };
+        const visualizationSize = { width: 1000, height: 500 };
+        const graphSize = { width: 500, height: 100 };
+        const tableSize = { width: 400, height: 400 };
+        const playButton = d3.select("#play-button");
+        // Initiate a simulation
+        const mySim = (_ => {
+            const simulation = new Simulation();
+            // Initialize this simulation
+            simulation.init(simulationOpts);
+
+            // We'll create 500 circles of random radii, moving in random directions at random speeds.
+            for (let i = 0; i < numParticles; i++) {
+                // const radius = d3.randomUniform(2, 5)();
+                const radius = 5;
+                const temp = d3.randomUniform(1)()
+                const temp2 = d3.randomUniform(1)()
+
+                // Add a circle to your simulation with simulation.add
+                simulation.add({
+                    speed: d3.randomUniform(1, 2)(),
+                    angle: d3.randomUniform(0, 360)(),
+                    pos: [
+                        d3.randomUniform(radius, simulation.width - radius)(),
+                        d3.randomUniform(radius, simulation.height - radius)()
+                    ],
+                    radius,
+                    // TODO logic for determining how many people are infected at the start of the simulation
+                    covidState: temp < .05 ? "infected" : "susceptible",
+                    timer: 0,
+                    quarantineState: temp2 < 0.05 ? true : false,
+
+                    susceptibility: calc_susceptibility(),
+                    infectivity: calc_infectivity()
+                });
+            }
+
+            return simulation;
+        })();
+
+        // Stats box
+        const stats = (_ => {
+            const stats = new Stats();
+            stats.domElement.style.position = "absolute";
+            stats.domElement.style.left = "0px";
+            stats.domElement.style.top = "0px";
+            document.getElementById("stats").appendChild(stats.domElement);
+            return stats;
+        })();
+
+        var myVis = new Visual("simulation", visualizationSize.height, visualizationSize.width);
+        var myGraph = new SimulationGraph("graph", mySim.timelength, numParticles, graphSize.height, graphSize.width);
+        var myTable = new SimulationTable("legend", mySim.compartmentStats);
+
+        var time = 0
+
+        function tick() {
+            if (time > mySim.timelength) {
+                playButton.text("Restart")
+                mySim.playing = 0
+                time = 0;
+
+            }
+            if (mySim.playing) {
+
+                mySim.tick();
+                myVis.update(mySim.data);
+                stats.update();
+                myTable.update(mySim.compartmentStats);
+                myGraph.update(mySim.compartmentStats, time);
+                time += 1;
+            }
+
+            requestAnimationFrame(tick);
+        }
+
+        playButton.on("click", function () {
+            var button = d3.select(this);
+            if (button.text() == "Pause particles") {
+                button.text("Run particles");
+                mySim.playing = 0
+            } else if (button.text() == "Restart particles") {
+
+
+                button.text("Run particles");
+                mySim.reset()
+                myVis.update(mySim.data)
+                myTable.update(mySim.compartmentStats);
+                myGraph.clear();
+
+
+            } else {
+
+                button.text("Pause particles");
+                mySim.playing = 1
+            }
+        })
+
+        tick();
+
+
+    </script>
+</body>
+
+</html>

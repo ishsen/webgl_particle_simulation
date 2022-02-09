@@ -1,0 +1,95 @@
+body {
+    margin: 0;
+    color: #2a2a2a;
+    font-family: 'Roboto', serif;
+}
+.container {
+    display: flex;
+    flex-direction: column;
+    
+}
+#graph {
+    height: 100%;
+}
+
+
+.visuals {
+    display: flex;
+    flex-direction: row;
+    min-height: 200px;
+}
+
+#legend {
+    display: flex;
+    flex-direction: column;
+}
+
+#simtable {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    width: 150px;
+    height: 100%;
+}
+
+div {
+
+    display: flex;
+    font-size: 12px;
+    font-weight: 300;
+    padding: 5px;
+    
+}
+
+h3 {
+    color: #2a2a2a;
+   display: flex;
+    border-bottom: 1px solid #eee;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 0px 0px;
+    margin: 0px 5px;
+}
+
+#labelID {
+  
+    vertical-align: middle;
+    line-height: normal; 
+    text-align: center;
+    text-transform: capitalize;
+}
+
+#tableCountID {
+    display: grid;
+    text-align: right;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+
+    line-height: normal;
+    text-align: center;
+    text-transform: capitalize;
+}
+
+#play-button {
+
+    border-radius: 3px;
+background-color: transparent;
+border: none;
+width: 200px;
+    font-size: 12px;
+    font-weight: 700;
+    margin: 10px;
+    padding: 0 20px;
+
+
+    
+}
+
+#play-button:hover {
+    cursor: pointer;
+}
+
+#simulation {
+    margin-left: 20px;
+}
